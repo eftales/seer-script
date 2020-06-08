@@ -1,7 +1,6 @@
 # 正式服
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 import pyautogui
 from time import sleep
 from sys import exit
@@ -13,29 +12,16 @@ pyautogui.PAUSE = 0.5 # 执行一个动作的时长
 waiteTime = 10
 cycle = 100
 maxFindTimes = 1000
-events = []
 
-# 点击原点位置
-print('请在 5s 内把鼠标指针移动到原点')
-sleep(5)
-baseX,baseY = pyautogui.position()
-print("当前鼠标位置为： ",(baseX,baseY))
-go = input("是否继续执行脚本？ y/n")
-if go == "n":
-    exit(1)
+methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
+        'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
+
+meth = methods[1]
+method = eval(meth)
 
 # 模板匹配算法
-def getTemplatePosition(templatePath):
-    methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
-            'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
-
-    meth = methods[1]
-    method = eval(meth)
-    x = baseX - 483
-    y = baseY - 574
-    w = 967
-    h = 611
-    img = pyautogui.screenshot(region=(x,y, w,h)) #x,y,w,h 这里的常量是测量 seer 怀旧服登录器 得到的
+def getTemplatePosition(templatePath,x,y,w,h):
+    img = pyautogui.screenshot(region=(x,y, w,h)) 
     img = cv2.cvtColor(np.asarray(img),cv2.COLOR_RGB2BGR)
     template = cv2.imread(templatePath,0)
     w, h = template.shape[::-1]
@@ -51,13 +37,19 @@ def getTemplatePosition(templatePath):
     bottom_right = (top_left[0] + w, top_left[1] + h)
     return (x + top_left[0] + w//2, y + top_left[1] + h//2)
 
+base = getTemplatePosition('pic/base.png',0,0,1920,1080)
+baseX = base[0]
+baseY = base[1]
+print("原点为 ",baseX,baseY)
 
-path = "sequence" #文件夹目录
+
+path = "sequence/光之子-米瑞斯" #文件夹目录
 files= os.listdir(path) #得到文件夹下的所有文件名称
-s = []
+
 for file in files: #遍历文件夹
      if not os.path.isdir(file): #判断是否是文件夹，不是文件夹才打开
         # 读取动作序列
+        events = [] # 初始化 events 列表
         print(path+"/"+file)
         with open(path+"/"+file,"r",encoding='utf8') as f:
             argvs = f.readline().replace('\n','').split("\t") 
@@ -103,7 +95,12 @@ for file in files: #遍历文件夹
 
                 else:
                     # 这是个图片（一般是精灵），需要去找
-                    pyautogui.click(getTemplatePosition('pic/' + event[0]))
+                    #x,y,w,h 这里的常量是测量 seer 怀旧服登录器 得到的
+                    x = baseX - 483
+                    y = baseY - 574
+                    w = 967
+                    h = 611
+                    pyautogui.click(getTemplatePosition('pic/' + event[0],x,y,w,h))
 
                 sleep(waiteTime)
             currentCycle += 1
