@@ -100,7 +100,7 @@ for file in files: #遍历文件夹
                     y = baseY -500
                     w = 948
                     h = 557
-                    pyautogui.click(getTemplatePosition('pic/' + event[0]))
+                    pyautogui.click(getTemplatePosition('pic/' + event[0],x,y,w,h))
 
                 sleep(waiteTime)
             currentCycle += 1

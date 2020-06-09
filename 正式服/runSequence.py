@@ -43,7 +43,7 @@ baseY = base[1]
 print("原点为 ",baseX,baseY)
 
 
-path = "sequence/光之子-米瑞斯" #文件夹目录
+path = "sequence/炽焰金刚" #文件夹目录
 files= os.listdir(path) #得到文件夹下的所有文件名称
 
 for file in files: #遍历文件夹
@@ -56,7 +56,8 @@ for file in files: #遍历文件夹
             try:
                 argvs = list(map(int,argvs))
             except:
-                pass
+                for each in argvs:
+                    print(type(each),each)
             argc = 0
 
             try :
